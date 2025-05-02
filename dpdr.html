@@ -1,0 +1,3449 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Doraźna Pomoc Dyżurnego Ruchu (DPDR)</title>
+  <link rel="icon" href="https://i.imgur.com/BfLfHkC.png" type="image/png">
+  <script>
+    function toggleOtherText() {
+      const option3 = document.getElementById("option3O").checked;
+      const otherText = document.getElementById("otherTextO");
+      otherText.style.display = option3 ? "inline" : "none";
+    }
+
+    function toggleZezwolenie() {
+      const zezwolenie = document.getElementById("zezwolenie").checked;
+      const rozkazSignal = document.getElementById("rozkazSignal");
+      const additionalCheckboxes = document.getElementById("additionalCheckboxes");
+      rozkazSignal.style.display = zezwolenie ? "block" : "none";
+      additionalCheckboxes.style.display = zezwolenie ? "block" : "none";
+    }
+
+    function toggleOption2() {
+      const option2 = document.getElementById("option2").checked;
+      const option2Details = document.getElementById("option2Details");
+      option2Details.style.display = option2 ? "block" : "none";
+    }
+
+    function toggleOption3() {
+      const option3 = document.getElementById("option3").checked;
+      const option3Details = document.getElementById("option3Details");
+      option3Details.style.display = option3 ? "block" : "none";
+    }
+
+    function toggleOption4() {
+      const option4 = document.getElementById("option4").checked;
+      const otherText = document.getElementById("otherText");
+      otherText.style.display = option4 ? "inline" : "none";
+    }
+  </script>
+  <style>
+    :root {
+      --accent-color: #b30000;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://i.imgur.com/wba7txV.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #f0f0f0;
+      min-height: 100vh;
+    }
+
+    [data-tooltip] {
+      position: relative;
+      cursor: help;
+    }
+
+    [data-tooltip]:before {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 1000;
+    }
+
+    [data-tooltip]:hover:before {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .btn-effect {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .btn-effect:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    .btn-effect:active:after {
+      width: 300px;
+      height: 300px;
+    }
+
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #b30000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .container, .nav, .history-window, .notes-window {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: rgba(20, 20, 20, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .fade-transition {
+      transition: all 0.3s ease;
+    }
+
+    .fade-enter {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .fade-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .nav a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(179, 0, 0, 0.3);
+    }
+
+    .history-item:hover, .note-item:hover {
+      transform: translateX(5px);
+      transition: transform 0.3s ease;
+    }
+
+    button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    button:active:after {
+      width: 300px;
+      height: 300px;
+    }
+
+    header {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 2rem;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      border-bottom: 5px solid var(--accent-color);
+      position: relative;
+      color: #ffffff;
+    }
+
+    .header-controls {
+      position: absolute;
+      top: 15px;
+      left: 25px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .logout-btn {
+      background: var(--accent-color);
+      border: none;
+      color: #ffffff;
+      padding: 5px 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: #ffd700;
+      transform: scale(1.05);
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 1rem;
+      border-bottom: 3px solid var(--accent-color);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% - 5px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 20, 0.95);
+      border: 1px solid var(--accent-color);
+      border-radius: 8px;
+      padding: 0.5rem 0;
+      min-width: 200px;
+      z-index: 1000;
+    }
+
+    .nav-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 0;
+      right: 0;
+      height: 15px;
+      background: transparent;
+    }
+
+    .nav-item:hover .nav-dropdown {
+      display: block;
+    }
+
+    .nav-dropdown a {
+      display: block;
+      padding: 12px 16px;
+      color: #f0f0f0;
+      text-decoration: none;
+      transition: background-color 0.2s;
+      background: none;
+      font-size: 1rem;
+      font-weight: normal;
+      margin: 0;
+      text-align: center;
+      min-width: 180px;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .nav-dropdown a:hover {
+      background: var(--accent-color);
+      color: #fff;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 0.3rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2a2a2a;
+      color: white;
+      font-size: 1rem;
+    }
+
+    input[type="text"]:focus, select:focus {
+      background-color: #3a3a3a;
+      outline: 2px solid #b30000;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 12px 24px;
+      background-color: #b30000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #cc0000;
+      transform: scale(1.05);
+    }
+
+    .history-panel {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      width: 400px;
+      height: 100vh;
+      background: rgba(20, 20, 20, 0.95);
+      border-left: 3px solid #b30000;
+      transition: right 0.3s ease;
+      z-index: 1000;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .history-panel.open {
+      right: 0;
+    }
+
+    .output {
+      background-color: rgba(30, 30, 30, 0.9);
+      color: #f0f0f0;
+      padding: 1.5rem;
+      border: 1px solid #b30000;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    .history-item {
+      background: rgba(30, 30, 30, 0.8);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border-left: 3px solid #b30000;
+    }
+
+    .history-item:hover {
+      background: rgba(40, 40, 40, 0.8);
+    }
+
+    .history-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .history-btn {
+      background: none;
+      border: 1px solid #b30000;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      margin-top: 0;
+    }
+
+    .history-btn:hover {
+      background: #b30000;
+    }
+
+    label {
+      display: block;
+      margin-top: 1.2rem;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .date-time {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 1rem;
+      color: #ccc;
+      text-align: right;
+    }
+    
+    .user-info {
+      position: absolute;
+      top: 35px;
+      right: 25px;
+      font-size: 1rem;
+      color: #ccc;
+      text-align: right;
+    }
+    
+    .online-time {
+      position: absolute;
+      top: 55px;
+      right: 25px;
+      font-size: 1rem;
+      color: #ccc;
+      text-align: right;
+    }
+
+    .history-item {
+      background: rgba(30, 30, 30, 0.8);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border-left: 3px solid #b30000;
+    }
+
+    .history-item:hover {
+      background: rgba(40, 40, 40, 0.8);
+    }
+
+    .history-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .history-item-content {
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .history-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .history-btn {
+      background: none;
+      border: 1px solid #b30000;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      margin-top: 0;
+    }
+
+    .history-btn:hover {
+      background: #b30000;
+    }
+
+    .history-window {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 800px;
+      max-height: 80vh;
+      background: rgba(20, 20, 20, 0.95);
+      border: 2px solid #b30000;
+      border-radius: 15px;
+      padding: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .history-window.open {
+      display: block;
+    }
+
+    .history-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #b30000;
+    }
+
+    .close-history-btn {
+      background: #b30000;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+    }
+
+    .overlay.open {
+      display: block;
+    }
+
+    .nav a {
+      color: #f0f0f0;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: background-color 0.3s, transform 0.3s;
+      background-color: rgba(255, 255, 255, 0.05);
+      display: inline-block;
+      margin: 5px;
+    }
+
+    .nav a:hover {
+      background-color: #b30000;
+      transform: scale(1.05);
+    }
+
+    .nav-item > a {
+      margin-bottom: 0;
+    }
+
+    .fade-enter {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .fade-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .preview-container {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 300px;
+      background: rgba(20, 20, 20, 0.95);
+      border: 1px solid #b30000;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 0.9rem;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .preview-container.hidden {
+      display: none;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #b30000;
+    }
+
+    .preview-content {
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    .notes-container {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(20, 20, 20, 0.8);
+      border-radius: 8px;
+      border: 1px solid #b30000;
+    }
+
+    .note-item {
+      background: rgba(30, 30, 30, 0.8);
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border-left: 3px solid #b30000;
+    }
+
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .note-content {
+      white-space: pre-wrap;
+    }
+
+    .history-filters {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: rgba(30, 30, 30, 0.8);
+      border-radius: 8px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .history-search {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .history-filter-select {
+      min-width: 150px;
+    }
+
+    /* Style dla statystyk */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .stat-card {
+      background: rgba(30, 30, 30, 0.8);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #b30000;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #b30000;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    /* Style dla systemu notatek */
+    .notes-window {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 600px;
+      background: rgba(20, 20, 20, 0.95);
+      border: 2px solid #b30000;
+      border-radius: 15px;
+      padding: 20px;
+      z-index: 1000;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .notes-window.hidden {
+      display: none;
+    }
+
+    .notes-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #b30000;
+    }
+
+    .notes-controls {
+      margin-bottom: 20px;
+    }
+
+    .note-input {
+      width: 100%;
+      min-height: 100px;
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid #b30000;
+      border-radius: 8px;
+      padding: 10px;
+      color: white;
+      font-family: inherit;
+      margin-bottom: 10px;
+      resize: vertical;
+    }
+
+    .note-btn {
+      background: #b30000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 0;
+    }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .note-item {
+      background: rgba(30, 30, 30, 0.8);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 3px solid #b30000;
+    }
+
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .note-content {
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .note-action-btn {
+      background: none;
+      border: 1px solid #b30000;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .note-action-btn:hover {
+      background: #b30000;
+    }
+
+    .pinned-note {
+      border-left: 3px solid #ffd700 !important;
+      background: rgba(40, 40, 40, 0.9) !important;
+    }
+
+    .pin-button {
+      color: #ffd700;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 5px;
+      transition: transform 0.3s ease;
+    }
+
+    .pin-button:hover {
+      transform: scale(1.2);
+    }
+
+    .pinned-indicator {
+      color: #ffd700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Dodaj przycisk notatek do nawigacji */
+    .nav a.with-icon {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Style dla tagów */
+    .tags-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 5px;
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid #b30000;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      background: #b30000;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tag-remove {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tag-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid #b30000;
+      border-radius: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .tag-suggestion {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .tag-suggestion:hover {
+      background: #b30000;
+    }
+
+    .pinned-note {
+      border-left: 3px solid #ffd700 !important;
+      background: rgba(40, 40, 40, 0.9) !important;
+    }
+
+    .pin-button {
+      color: #ffd700;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 5px;
+      transition: transform 0.3s ease;
+    }
+
+    .pin-button:hover {
+      transform: scale(1.2);
+    }
+
+    .pinned-indicator {
+      color: #ffd700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Modyfikacja okna notatek */
+    .notes-controls {
+      position: relative;
+    }
+
+    .notes-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .notes-filter {
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid #b30000;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .notes-filter.active {
+      background: #b30000;
+    }
+
+    /* Style dla modułu procedur */
+    .procedures-window {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      height: 90vh;
+      background: rgba(20, 20, 20, 0.95);
+      border: 2px solid #b30000;
+      border-radius: 15px;
+      padding: 20px;
+      z-index: 1000;
+      display: none;
+    }
+
+    .procedures-window.open {
+      display: flex;
+    }
+
+    .procedures-sidebar {
+      width: 300px;
+      border-right: 1px solid #b30000;
+      padding-right: 20px;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    .procedures-content {
+      flex: 1;
+      padding-left: 20px;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    .procedures-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #b30000;
+    }
+
+    .procedure-search {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid #b30000;
+      border-radius: 8px;
+      color: white;
+    }
+
+    .procedures-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .procedure-category {
+      margin-bottom: 10px;
+    }
+
+    .category-header {
+      padding: 10px;
+      background: rgba(179, 0, 0, 0.2);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .category-header:hover {
+      background: rgba(179, 0, 0, 0.4);
+    }
+
+    .category-content {
+      padding-left: 20px;
+      display: none;
+    }
+
+    .category-content.open {
+      display: block;
+    }
+
+    .procedure-item {
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .procedure-item:hover {
+      background: rgba(179, 0, 0, 0.2);
+    }
+
+    .procedure-content {
+      background: rgba(30, 30, 30, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .procedure-title {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #b30000;
+    }
+
+    .procedure-description {
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .procedure-steps {
+      list-style: none;
+      padding: 0;
+    }
+
+    .procedure-step {
+      padding: 10px;
+      margin-bottom: 10px;
+      background: rgba(40, 40, 40, 0.8);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-number {
+      background: #b30000;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .bookmark-btn {
+      background: none;
+      border: 1px solid #b30000;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      margin-left: auto;
+    }
+
+    .bookmark-btn:hover {
+      background: #b30000;
+    }
+
+    /* Style dla chatu */
+    .chat-window {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 800px;
+      height: 80vh;
+      background: rgba(20, 20, 20, 0.95);
+      border: 2px solid #b30000;
+      border-radius: 15px;
+      padding: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-window.hidden {
+      display: none;
+    }
+
+    .chat-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #b30000;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      background: rgba(30, 30, 30, 0.8);
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .chat-message {
+      background: rgba(40, 40, 40, 0.8);
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border-left: 3px solid #b30000;
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .message-content {
+      white-space: pre-wrap;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      min-height: 60px;
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid #b30000;
+      border-radius: 8px;
+      padding: 10px;
+      color: white;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    .chat-send-btn {
+      background: #b30000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .chat-send-btn:hover {
+      background: #cc0000;
+      transform: scale(1.05);
+    }
+
+    .red-line {
+      width: 100%;
+      height: 4px;
+      background: var(--accent-color);
+      border-radius: 2px;
+      margin: 1.5rem 0 1.5rem 0;
+    }
+    .stat-card {
+      border: 1px solid var(--accent-color);
+    }
+    .step-number {
+      background: var(--accent-color);
+    }
+    /* Dodaję domyślne style do .swdr4-panel w <style> jeśli nie istnieją */
+    .swdr4-panel {
+      margin-top: 2.5rem;
+      background: rgba(30,30,30,0.92);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1.5px solid #b30000;
+    }
+    /* --- PRZYPOMNIENIA --- */
+    #reminders .reminders-container {
+      margin-top: 30px;
+      background: rgba(30,30,30,0.92);
+      border-radius: 16px;
+      padding: 32px 24px 24px 24px;
+      box-shadow: 0 0 18px rgba(0,0,0,0.25);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #reminderForm {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    #reminderForm input[type="text"], #reminderForm input[type="number"] {
+      flex: 1 1 180px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1.5px solid #b30000;
+      background: #232323;
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 0;
+    }
+    #reminderForm button {
+      flex: 1 1 180px;
+      padding: 12px 0;
+      background: #b30000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0;
+    }
+    #reminderForm button:hover {
+      background: #cc0000;
+    }
+    #remindersList {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .reminder-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(40,40,40,0.95);
+      border-left: 4px solid #b30000;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 1.08rem;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .reminder-item button {
+      background: #b30000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-left: 18px;
+      transition: background 0.2s;
+    }
+    .reminder-item button:hover {
+      background: #cc0000;
+    }
+    @media (max-width: 600px) {
+      #reminderForm {
+        flex-direction: column;
+        gap: 10px;
+      }
+      #reminderForm button {
+        width: 100%;
+      }
+    }
+    #reminders h2 {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    #reminders .reminders-success {
+      background: #2e7d32;
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px 0;
+      text-align: center;
+      margin-bottom: 18px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      display: none;
+    }
+    #remindersList {
+      margin-top: 18px;
+    }
+    .no-reminders {
+      color: #aaa;
+      text-align: center;
+      font-size: 1.05rem;
+      margin: 18px 0 0 0;
+    }
+  </style>
+    
+  
+</head>
+<body>
+<header>
+  <div class="header-controls">
+    <img src="https://i.imgur.com/BfLfHkC.png" alt="Logo" style="height: 80px; width: auto;">
+  </div>
+  <button class="logout-btn" onclick="logout()" style="position: absolute; top: 60px; right: 25px; vertical-align: middle;">Wyloguj</button>
+  Doraźna Pomoc Dyżurnego Ruchu (DPDR)
+  <div class="date-time" id="dateTime"></div>
+  <div class="user-info" id="userInfo"></div>
+  <div class="online-time" id="onlineTime"></div>
+</header>
+
+<!-- Panel ustawień -->
+<div id="settingsPanel" class="container hidden" style="position: fixed; top: 80px; right: 40px; z-index: 2000; max-width: 320px; background: rgba(20,20,20,0.98); border: 2px solid #b30000; border-radius: 16px; box-shadow: 0 4px 24px 0 rgba(0,0,0,0.25);">
+  <h3 style="color: #ffd700;">Ustawienia</h3>
+  <div style="margin-bottom: 1.2rem;">
+    <label for="themeSelect">Motyw:</label>
+    <select id="themeSelect" style="width: 100%; margin-top: 0.3rem;">
+      <option value="dark">Ciemny</option>
+      <option value="light">Jasny</option>
+    </select>
+  </div>
+  <div style="margin-bottom: 1.2rem;">
+    <label for="accentSelect">Kolor akcentu:</label>
+    <select id="accentSelect" style="width: 100%; margin-top: 0.3rem;">
+      <option value="red">Czerwony (domyślny)</option>
+      <option value="gold">Złoty</option>
+      <option value="blue">Niebieski</option>
+      <option value="green">Zielony</option>
+    </select>
+  </div>
+  <button onclick="closeSettings()" style="width: 100%; margin-top: 1rem;">Zamknij</button>
+</div>
+
+<div class="nav">
+  <a href="#" onclick="showTab('stronaGlowna')">Strona Główna</a>
+  <div class="nav-item">
+    <a href="#" onclick="showTab('generatorRozkazow')">Generator rozkazów</a>
+    <div class="nav-dropdown">
+      <a href="#" onclick="toggleHistory()">Historia rozkazów</a>
+    </div>
+  </div>
+  <div class="nav-item">
+    <a href="#" onclick="showTab('generatorZapowiedzi')">Generator zapowiedzi</a>
+    <div class="nav-dropdown">
+      <a href="#" onclick="toggleAnnouncementHistory()">Historia zapowiedzi</a>
+    </div>
+  </div>
+  <a href="#" onclick="showTab('generatorRozkladow')">Generator rozkładów jazdy</a>
+  <a href="#" onclick="toggleProcedures()">Procedury</a>
+  <a href="#" onclick="toggleNotes()">Notatki</a>
+  <a href="#" onclick="showTab('info')">Info</a>
+</div>
+
+<div class="container" id="login">
+  <h2>Logowanie</h2>
+  <label for="drName">Dyżurny ruchu:</label>
+  <input type="text" id="drName">
+  <label for="station">Stacja:</label>
+  <input type="text" id="station">
+  <button onclick="saveLogin()">Zaloguj</button>
+</div>
+
+<div class="container hidden" id="mainApp">
+  <div id="stronaGlowna" class="tabContent">
+    <h2>Strona Główna</h2>
+    <div class="announcements">
+      <h3>Ostatnie zmiany</h3>
+      <div class="changelog">
+        <p><strong>v1.1.1 (Aktualizacja)</strong></p>
+        <ul>
+          <li>Dodano generator zapowiedzi pociągów wraz z historią</li>
+        </ul>
+        <p><strong>v1.0 (Pierwsza wersja)</strong></p>
+        <ul>
+          <li>Stworzenie i publikacja aplikacji DPDR</li>
+        </ul>
+      </div>
+      <h3>Ogłoszenia</h3>
+      <div class="announcement-content">
+        <p>Brak aktualnych ogłoszeń.</p>
+      </div>
+    </div>
+  </div>
+  <div id="generatorRozkazow" class="tabContent hidden">
+    <h2>Generator rozkazów</h2>
+    <label for="rozkazType">Wybierz typ rozkazu:</label>
+    <select id="rozkazType" onchange="toggleRozkazForm()">
+      <option value="O">Rozkaz O</option>
+      <option value="S">Rozkaz S</option>
+      <option value="N">Rozkaz N</option>
+    </select>
+
+    <div id="formO">
+      <h3>Rozkaz O</h3>
+      <label for="trainNumberO">Numer pociągu:</label>
+      <input type="text" id="trainNumberO">
+      <label><input type="checkbox" id="option1O"> Zmniejszyć prędkość jazdy i zachować ostrożność</label>
+      <label><input type="checkbox" id="option2O"> Jechać ostrożnie (skrót j.o.)</label>
+      <label><input type="checkbox" id="option3O" onclick="toggleOtherText()"> Inne: <input type="text" id="otherTextO" class="hidden"></label>
+      <button onclick="generateRozkazO()" style="margin-top: 20px;">Generuj Rozkaz</button>
+    </div>
+
+    <div id="formS" class="hidden">
+      <h3>Rozkaz S</h3>
+      <label for="trainNumberS">Numer pociągu:</label>
+      <input type="text" id="trainNumberS">
+      <label><input type="checkbox" id="zezwolenie" onclick="toggleZezwolenie()"> 1) Zezwalam po otrzymaniu</label>
+      <select id="rozkazSignal" class="hidden">
+        <option value="tylkoRozkaz">tylko tego rozkazu</option>
+        <option value="sygnalNakaz">sygnału "Nakaz jazdy"</option>
+      </select>
+      <div id="additionalCheckboxes" class="hidden" style="margin-left: 2rem;">
+        <label>1.1) Przejechać obok wskazującego sygnał "Stój" semafora wyjazdowego: <input type="text" id="textWyjazd"></label>
+        <label>1.2) Przejechać obok wskazującego sygnał "Stój" semafora drogowskazowego: <input type="text" id="textDrogowskaz"></label>
+        <label>1.3) Wyjechać z toru nr <input type="text" id="textTorBezSemafora"> nie posiadającego semafora wyjazdowego</label>
+      </div>
+
+      <label><input type="checkbox" id="option2" onclick="toggleOption2()"> 2) Zezwalam przejechać obok wskazującego sygnał "Stój" semafora:</label>
+      <div id="option2Details" class="hidden" style="margin-left: 2rem;">
+        <label>2.1) wjazdowego: <input type="text" id="inputWjazdowy"></label>
+        <label>2.2) drogowskazowego: <input type="text" id="inputDrogowskazowy"></label>
+        <label>2.3) odstępowego: <input type="text" id="inputOdstepowy"></label>
+      </div>
+
+      <label><input type="checkbox" id="option3" onclick="toggleOption3()"> 3) Ruch pociągów w odstępie posterunków następczych</label>
+      <div id="option3Details" class="hidden" style="margin-left: 2rem;">
+        <label>Od km: <input type="text" id="kmOd"></label>
+        <label>Do km: <input type="text" id="kmDo"></label>
+        <label>Ostatni pociąg nr: <input type="text" id="lastTrainNumber"></label>
+        <label>Przybył do: <input type="text" id="stationName"></label>
+        <label>O godz.: <input type="text" id="arrivalTimeS"></label>
+      </div>
+
+      <label><input type="checkbox" id="option4" onclick="toggleOption4()"> 4) Inne: <input type="text" id="otherText" class="hidden"></label>
+
+      <button onclick="generateRozkazS()">Generuj Rozkaz</button>
+    </div>
+
+    <div id="formN" class="hidden">
+      <h3>Rozkaz N</h3>
+      <label for="trainNumberN">Numer pociągu:</label>
+      <input type="text" id="trainNumberN">
+
+      <div style="margin-top: 10px;">
+        <label><input type="checkbox" id="option1N" onclick="toggleOption1N()"> 1) Ruch jednotorowy dwukierunkowy</label>
+        <div id="option1Details" class="hidden" style="margin-left: 2rem;">
+          <label>Od: <input type="text" id="odKm"></label>
+          <label>Do: <input type="text" id="doKm"></label>
+          <label>Tor zamknięty nr: <input type="text" id="torZamkniety"></label>
+          <label>Ruch po torze nr: <input type="text" id="torRuch"></label>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <label><input type="checkbox" id="option2N" onclick="toggleOption2N()"> 2) Zezwalam po otrzymaniu</label>
+        <div id="option2Container" class="hidden" style="margin-left: 2rem;">
+          <select id="rozkazSignalN" style="margin: 10px 0; width: 100%;">
+            <option value="tylkoRozkaz">tego rozkazu</option>
+            <option value="sygnalNakaz">sygnału "Nakaz jazdy"</option>
+          </select>
+
+          <div>
+            <label><input type="checkbox" id="option21N" onclick="toggleSubOption('21')"> 2.1) przejechać obok wskazującego sygnał "Stój" semafora wyjazdowego</label>
+            <div id="option21Details" class="hidden" style="margin-left: 1rem; margin-top: 5px;">
+              <label>Semafor: <input type="text" id="semafor21"></label><br>
+              <label>Kierunek: <input type="text" id="kierunek21"></label><br>
+              <label>Tor szlakowy: 
+                <select id="torKierunek21">
+                  <option value="prawy">prawy</option>
+                  <option value="lewy">lewy</option>
+                </select>
+                nr <input type="text" id="torNr21" style="width: 50px;">
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top: 10px;">
+            <label><input type="checkbox" id="option22N" onclick="toggleSubOption('22')"> 2.2) przejechać obok wskazującego sygnał "Stój" semafora drogowskazowego</label>
+            <div id="option22Details" class="hidden" style="margin-left: 1rem; margin-top: 5px;">
+              <label>Semafor: <input type="text" id="semafor22"></label><br>
+              <label>Kierunek: <input type="text" id="kierunek22"></label><br>
+              <label>Tor szlakowy: 
+                <select id="torKierunek22">
+                  <option value="prawy">prawy</option>
+                  <option value="lewy">lewy</option>
+                </select>
+                nr <input type="text" id="torNr22" style="width: 50px;">
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top: 10px;">
+            <label><input type="checkbox" id="option23N" onclick="toggleSubOption('23')"> 2.3) przejechać obok wskazującego sygnał "Stój" semafora wjazdowego</label>
+            <div id="option23Details" class="hidden" style="margin-left: 1rem; margin-top: 5px;">
+              <label>Semafor: <input type="text" id="semafor23"></label><br>
+              <label>Kierunek: <input type="text" id="kierunek23"></label><br>
+              <label>Tor szlakowy: 
+                <select id="torKierunek23">
+                  <option value="prawy">prawy</option>
+                  <option value="lewy">lewy</option>
+                </select>
+                nr <input type="text" id="torNr23" style="width: 50px;">
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top: 10px;">
+            <label><input type="checkbox" id="option24N" onclick="toggleSubOption('24')"> 2.4) wyjechać z toru bez semafora wyjazdowego</label>
+            <div id="option24Details" class="hidden" style="margin-left: 1rem; margin-top: 5px;">
+              <label>Z toru nr: <input type="text" id="torWyjazd24"></label><br>
+              <label>Kierunek: <input type="text" id="kierunek24"></label><br>
+              <label>Tor szlakowy: 
+                <select id="torKierunek24">
+                  <option value="prawy">prawy</option>
+                  <option value="lewy">lewy</option>
+                </select>
+                nr <input type="text" id="torNr24" style="width: 50px;">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <label><input type="checkbox" id="option3N" onclick="toggleOption3N()"> 3) Jazda - popychanie pociągu</label>
+        <div id="option3Container" class="hidden" style="margin-left: 2rem;">
+          <div style="margin-top: 5px;">
+            <label>w kierunku: <input type="text" id="kierunekPush" style="width: 100%;"></label>
+          </div>
+          <div style="margin-top: 5px;">
+            <label>do km: <input type="text" id="doKmPush" style="width: 100%;"></label>
+          </div>
+          <div style="margin-top: 5px;">
+            <label>powrót po torze lewym nr: <input type="text" id="torPowrot" style="width: 100%;"></label>
+          </div>
+          <div style="margin-top: 5px;">
+            <label>najpóźniej o godz.: <input type="text" id="godzPowrot" style="width: 50px;"></label>
+            <label>min.: <input type="text" id="minPowrot" style="width: 50px;"></label>
+          </div>
+        </div>
+      </div>
+
+      <label><input type="checkbox" id="option4N" onclick="toggleOption4N()"> 4) Wjazd z toru szlakowego</label>
+      <div id="option4Details" class="hidden" style="margin-left: 2rem;">
+        <label>Z toru nr: <input type="text" id="torWjazd"></label>
+        <label>Na: 
+          <select id="miejsceWjazdu">
+            <option value="stacje">stację</option>
+            <option value="post">post. odg.</option>
+          </select>
+          <input type="text" id="nazwaWjazdu">
+        </label>
+        <div style="margin-top: 10px;">
+          <label><input type="checkbox" id="option41N"> 4.1) sygnał zastępczy "Sz" na osobnym urządzeniu z</label>
+          <select id="stronaSz">
+            <option value="lewej">lewej</option>
+            <option value="prawej">prawej</option>
+          </select>
+          <label>strony toru</label>
+        </div>
+        <label><input type="checkbox" id="option42N"> 4.2) rozkazu pisemnego "N"</label>
+      </div>
+
+      <label><input type="checkbox" id="option5N" onclick="toggleOption5N()"> 5) Zezwalam wjechać z toru szlakowego</label>
+      <div id="option5Details" class="hidden" style="margin-left: 2rem;">
+        <label>Z toru nr: <input type="text" id="torWjazd5"></label>
+        <label>Z kierunku: <input type="text" id="kierunekWjazd5"></label>
+        <label>Na: 
+          <select id="miejsceWjazdu5">
+            <option value="stacje">stację</option>
+            <option value="post">post. odg.</option>
+          </select>
+          <input type="text" id="nazwaWjazdu5">
+        </label>
+        <label>Przejechać obok sygnału "Stój" na: <input type="text" id="semaforStoj5"></label>
+      </div>
+
+      <label><input type="checkbox" id="option6N" onclick="toggleOption6N()"> 6) Inne: <input type="text" id="otherTextN" class="hidden"></label>
+
+      <button onclick="generateRozkazN()">Generuj Rozkaz</button>
+    </div>
+
+    <div class="output" id="output"></div>
+    <button onclick="copyToClipboard()" style="margin-top: 20px;">Kopiuj rozkaz</button>
+  </div>
+</div>
+
+<div id="generatorZapowiedzi" class="container hidden tabContent">
+  <h2>Generator zapowiedzi</h2>
+  <div style="margin-bottom: 15px; color: #ffd700; background: rgba(40,40,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid #b30000;">
+    Oryginalny głos zapowiedzi kolejowych (IVONA/Maja) pojawi się, gdy strona będzie dostępna online.
+  </div>
+  <label for="trainNumberAnn">Numer pociągu:</label>
+  <input type="text" id="trainNumberAnn">
+
+  <label for="trainAction">Pociąg:</label>
+  <select id="trainAction">
+    <option value="przyjedzie">przyjedzie</option>
+    <option value="odjedzie">odjedzie</option>
+    <option value="stoi">stoi</option>
+    <option value="przejedzie">bez zatrzymania</option>
+  </select>
+
+  <label for="startStation">Stacja początkowa:</label>
+  <input type="text" id="startStation">
+
+  <label for="endStation">Stacja końcowa:</label>
+  <input type="text" id="endStation">
+
+  <label for="viaStations">Przez (stacje pośrednie):</label>
+  <input type="text" id="viaStations">
+
+  <label for="operator">Przewoźnik:</label>
+  <select id="operator">
+    <option value="PKP Intercity">PKP Intercity</option>
+    <option value="Polregio">Polregio</option>
+    <option value="Koleje Dolnośląskie">Koleje Dolnośląskie</option>
+    <option value="Koleje Małopolskie">Koleje Małopolskie</option>
+    <option value="Koleje Mazowieckie">Koleje Mazowieckie</option>
+    <option value="Koleje Śląskie">Koleje Śląskie</option>
+    <option value="Koleje Wielkopolskie">Koleje Wielkopolskie</option>
+    <option value="Łódzka Kolej Aglomeracyjna">Łódzka Kolej Aglomeracyjna</option>
+    <option value="Szybka Kolej Miejska">Szybka Kolej Miejska</option>
+  </select>
+
+  <label for="category">Kategoria handlowa:</label>
+  <select id="category">
+    <option value="EIC">EIC</option>
+    <option value="IC">IC</option>
+    <option value="TLK">TLK</option>
+    <option value="interREGIO">interREGIO</option>
+    <option value="superREGIO">superREGIO</option>
+    <option value="Sprinter">Sprinter</option>
+    <option value="Os. Przyspieszony">Os. Przyspieszony</option>
+    <option value="Osobowy">Osobowy</option>
+  </select>
+
+  <label for="trainName">Nazwa pociągu:</label>
+  <input type="text" id="trainName">
+
+  <label for="platform">Peron:</label>
+  <input type="text" id="platform" placeholder="np. 1">
+
+  <label for="track">Tor:</label>
+  <input type="text" id="track" placeholder="np. 2">
+
+  <label for="arrivalTime">Godzina przyjazdu:</label>
+  <input type="text" id="arrivalTime" placeholder="np. 12:33">
+
+  <label for="departureTime">Godzina odjazdu:</label>
+  <input type="text" id="departureTime" placeholder="np. 13:05">
+
+  <label for="delay">Opóźnienie (minuty):</label>
+  <input type="text" id="delay" placeholder="np. 5">
+
+  <button onclick="generateAnnouncement()" style="margin-top: 20px;">Generuj zapowiedź</button>
+  <button onclick="copyAnnouncement()" style="margin-top: 20px; margin-left: 10px;">Kopiuj zapowiedź</button>
+
+  <div class="output" id="announcementOutput" style="margin-top: 20px;"></div>
+
+  <div class="voice-controls" style="margin-top: 20px; padding: 15px; background: rgba(30, 30, 30, 0.8); border-radius: 8px;">
+    <h3>Synteza mowy</h3>
+    <label for="voiceSelect">Wybierz głos:</label>
+    <select id="voiceSelect" style="width: 100%; margin-bottom: 10px;"></select>
+    <div style="display: flex; gap: 20px; margin-bottom: 10px;">
+      <div style="flex: 1;">
+        <label for="rateRange">Szybkość mowy:</label>
+        <input type="range" id="rateRange" min="0.5" max="2" value="1" step="0.1" style="width: 100%;">
+        <span id="rateValue">1.0</span>
+      </div>
+      <div style="flex: 1;">
+        <label for="volumeRange">Głośność:</label>
+        <input type="range" id="volumeRange" min="0" max="1" value="1" step="0.1" style="width: 100%;">
+        <span id="volumeValue">1.0</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button onclick="playAnnouncement()" style="flex: 1;">▶️ Odtwórz zapowiedź</button>
+      <button onclick="stopAnnouncement()" style="flex: 1;">⏹️ Zatrzymaj</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dodaj okno historii zapowiedzi -->
+<div class="history-window" id="announcementHistoryWindow">
+  <div class="history-window-header">
+    <h2>Historia zapowiedzi</h2>
+    <div>
+      <button onclick="exportAnnouncementsToPDF()" class="history-btn">📄 Eksportuj do PDF</button>
+      <button class="close-history-btn" onclick="closeAnnouncementHistory()">✕ Zamknij</button>
+    </div>
+  </div>
+  
+  <div class="history-filters">
+    <select class="history-filter-select" id="announcementTypeFilter" onchange="filterAnnouncementHistory()">
+      <option value="">Wszystkie typy</option>
+      <option value="przyjedzie">Przyjazd</option>
+      <option value="odjedzie">Odjazd</option>
+      <option value="stoi">Postój</option>
+      <option value="przejedzie">Bez zatrzymania</option>
+    </select>
+  </div>
+
+  <div id="announcementHistoryContent"></div>
+
+  <div id="announcementStatsContainer" class="stats-container">
+    <div class="stat-card">
+      <div class="stat-number" id="totalAnnouncements">0</div>
+      <div class="stat-label">Wszystkie zapowiedzi</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="typeArrivalAnnouncements">0</div>
+      <div class="stat-label">Zapowiedzi przyjazdu</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="typeDepartureAnnouncements">0</div>
+      <div class="stat-label">Zapowiedzi odjazdu</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="typeNoStopAnnouncements">0</div>
+      <div class="stat-label">Zapowiedzi bez zatrzymania</div>
+    </div>
+  </div>
+</div>
+
+<div class="container hidden" id="info">
+    <div class="info-content">
+      <h2>Informacje</h2>
+      <p>Wydane przez: vakaru</p>
+      <p>Discord: viqxon</p>
+      <p>Wersja APK: v1.1.1</p>
+      <a href="https://td2.info.pl/profile/?u=20103" target="_blank">
+        <button>Profil TD2</button>
+      </a>
+    </div>
+  </div>
+
+<div class="overlay" id="overlay"></div>
+<div class="history-window" id="historyWindow">
+  <div class="history-window-header">
+    <h2>Historia rozkazów</h2>
+    <div>
+      <button onclick="exportToPDF()" class="history-btn">📄 Eksportuj do PDF</button>
+      <button class="close-history-btn" onclick="closeHistory()">✕ Zamknij</button>
+    </div>
+  </div>
+  
+  <div class="history-filters">
+    <select class="history-filter-select" id="typeFilter" onchange="filterHistory()">
+      <option value="">Wszystkie typy</option>
+      <option value="O">Rozkaz O</option>
+      <option value="S">Rozkaz S</option>
+      <option value="N">Rozkaz N</option>
+    </select>
+  </div>
+
+  <div id="historyContent"></div>
+
+  <div id="statsContainer" class="stats-container">
+    <div class="stat-card">
+      <div class="stat-number" id="totalOrders">0</div>
+      <div class="stat-label">Wszystkie rozkazy</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="typeOOrders">0</div>
+      <div class="stat-label">Rozkazy O</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="typeSOrders">0</div>
+      <div class="stat-label">Rozkazy S</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="typeNOrders">0</div>
+      <div class="stat-label">Rozkazy N</div>
+    </div>
+  </div>
+</div>
+
+<!-- System notatek -->
+<div class="notes-window hidden" id="notesWindow">
+  <div class="notes-window-header">
+    <h2>Notatki</h2>
+    <button class="close-history-btn" onclick="toggleNotes()">✕ Zamknij</button>
+  </div>
+  
+  <div class="notes-controls">
+    <textarea id="newNote" placeholder="Wpisz nową notatkę..." class="note-input"></textarea>
+    <button onclick="addNote()" class="note-btn">➕ Dodaj notatkę</button>
+  </div>
+
+  <div class="notes-filters">
+    <button class="notes-filter active" onclick="filterNotes('all')">Wszystkie</button>
+    <button class="notes-filter" onclick="filterNotes('pinned')">Przypięte</button>
+  </div>
+
+  <div id="notesList" class="notes-list"></div>
+</div>
+
+<!-- Dodaj element loading -->
+<div class="loading" id="loadingSpinner">
+  <div class="spinner"></div>
+</div>
+
+<!-- Moduł procedur -->
+<div class="procedures-window" id="proceduresWindow">
+  <div class="procedures-sidebar">
+    <div class="procedures-header">
+      <h2>Sygnalizacja kolejowa</h2>
+      <button class="close-history-btn" onclick="toggleProcedures()">✕</button>
+    </div>
+    <input type="text" class="procedure-search" id="procedureSearch" placeholder="Szukaj sygnału...">
+    <ul class="procedures-list" id="proceduresList">
+      <li class="procedure-category">
+        <div class="category-header" onclick="toggleCategory('semafory')">
+          Sygnały na semaforach
+        </div>
+        <div class="category-content" id="semafory">
+          <div class="procedure-item" onclick="showProcedure('syg-semafor')">Sygnały na semaforach świetlnych</div>
+        </div>
+      </li>
+      <li class="procedure-category">
+        <div class="category-header" onclick="toggleCategory('tarcze')">
+          Tarcze ostrzegawcze
+        </div>
+        <div class="category-content" id="tarcze">
+          <div class="procedure-item" onclick="showProcedure('syg-tarcza')">Sygnały na tarczach ostrzegawczych</div>
+        </div>
+      </li>
+      <li class="procedure-category">
+        <div class="category-header" onclick="toggleCategory('manewrowe')">
+          Sygnały manewrowe
+        </div>
+        <div class="category-content" id="manewrowe">
+          <div class="procedure-item" onclick="showProcedure('syg-manewrowa')">Tarcze manewrowe</div>
+        </div>
+      </li>
+      <li class="procedure-category">
+        <div class="category-header" onclick="toggleCategory('wskazniki')">
+          Wskaźniki
+        </div>
+        <div class="category-content" id="wskazniki">
+          <div class="procedure-item" onclick="showProcedure('syg-wskazniki')">Wskaźniki i sygnały dodatkowe</div>
+        </div>
+      </li>
+      <li class="procedure-category">
+        <div class="category-header" onclick="toggleCategory('reczne')">
+          Sygnały ręczne
+        </div>
+        <div class="category-content" id="reczne">
+          <div class="procedure-item" onclick="showProcedure('syg-reczne')">Sygnały ręczne i przenośne</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="procedures-content" id="procedureContent">
+    <div class="procedure-content">
+      <h3 class="procedure-title">Wybierz sygnał z listy</h3>
+      <p class="procedure-description">
+        Baza sygnałów kolejowych oparta na Instrukcji sygnalizacji Ie-1.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Dodaj okno chatu -->
+<div class="chat-window hidden" id="chatWindow">
+  <div class="chat-window-header">
+    <h2>Chat dyżurnych</h2>
+    <button class="close-history-btn" onclick="toggleChat()">✕ Zamknij</button>
+  </div>
+  
+  <div class="chat-messages" id="chatMessages"></div>
+  
+  <div class="chat-input-container">
+    <textarea id="chatInput" placeholder="Wpisz wiadomość..." class="chat-input"></textarea>
+    <button onclick="sendMessage()" class="chat-send-btn">Wyślij</button>
+  </div>
+</div>
+
+<div class="container hidden tabContent" id="generatorRozkladow">
+  <h2>Generator rozkładów jazdy</h2>
+  <div style="margin-top: 30px; color: #ffd700; background: rgba(40,40,0,0.2); padding: 18px; border-radius: 8px; border: 1px solid #b30000; font-size: 1.2rem; text-align: center;">
+    Moduł generatora rozkładów jazdy będzie dostępny wkrótce!
+  </div>
+</div>
+
+<script>
+  // Usuwam sekcję SWDR4
+  document.querySelectorAll('.swdr4-panel').forEach(el => el.remove());
+  
+  let loggedDrName = '';
+  let loggedStation = '';
+  let loginTime = null;
+  let orderNumberO = 1;
+  let orderNumberS = 1;
+  let orderNumberN = 1;
+  let orderHistory = [];
+  let notes = JSON.parse(localStorage.getItem('drNotes') || '[]');
+  let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+
+  const procedures = {
+    'syg-semafor': {
+      title: 'Sygnały na semaforach świetlnych',
+      description: 'Podstawowe sygnały świetlne na semaforach kolejowych',
+      content: [
+        {
+          type: 'list',
+          title: 'Sygnały podstawowe',
+          items: [
+            'S1 - "Stój" - jedno światło czerwone',
+            'Sz - "Sygnał zastępczy" - jedno światło czerwone i poniżej jedno białe światło migające',
+            'S2 - "Jazda z największą dozwoloną prędkością" - jedno światło zielone',
+            'S3 - "Jazda z największą dozwoloną prędkością, a przy następnym semaforze jazda z prędkością nieprzekraczającą 100 km/h" - jedno światło zielone (w przodzie są dwa odstępy blokowe wolne)',
+            'S4 - "Następny semafor wskazuje sygnał zezwalający na jazdę z prędkością zmniejszoną do 40 lub 60 km/h" - jedno światło pomarańczowe',
+            'S5 - "Następny semafor wskazuje sygnał Stój" - jedno światło pomarańczowe migające',
+            'S6 - "Jazda z prędkością nieprzekraczającą 100km/h, a potem z największą dozwoloną prędkością" - światło zielone i poniżej światło pomarańczowe oraz pas zielony',
+            'S7 - "Jazda z prędkością nieprzekraczającą 100km/h przy tym i następnym semaforze" - światło zielone i poniżej światło pomarańczowe oraz pas zielony',
+            'S8 - "Jazda z prędkością nieprzekraczającą 100km/h, a przy następnym semaforze z prędkością zmniejszoną do 40 lub 60 km/h" - dwa światła pomarańczowe oraz pas zielony',
+            'S9 - "Jazda z prędkością nieprzekraczającą 100km/h, a następny semafor wskazuje sygnał Stój" - dwa światła pomarańczowe oraz pas zielony',
+            'S10 - "Jazda z prędkością nieprzekraczającą 40 km/h, a potem z największą dozwoloną prędkością" - światło zielone i poniżej światło pomarańczowe',
+            'S11 - "Jazda z prędkością nieprzekraczającą 40 km/h, a przy następnym semaforze z prędkością nieprzekraczającą 100 km/h" - światło zielone i poniżej światło pomarańczowe',
+            'S12 - "Jazda z prędkością nieprzekraczającą 40 km/h, a przy następnym semaforze z prędkością nieprzekraczającą 40 lub 60 km/h" - dwa światła pomarańczowe',
+            'S13 - "Jazda z prędkością nieprzekraczającą 40 km/h, a następny semafor wskazuje sygnał Stój" - dwa światła pomarańczowe',
+            'S10a - "Jazda z prędkością nieprzekraczającą 60 km/h, a potem z największą dozwoloną prędkością" - światło zielone i poniżej światło pomarańczowe oraz pas pomarańczowy',
+            'S11a - "Jazda z prędkością nieprzekraczającą 60 km/h, a przy następnym semaforze z prędkością nieprzekraczającą 100 km/h" - światło zielone i poniżej światło pomarańczowe oraz pas pomarańczowy',
+            'S12a - "Jazda z prędkością nieprzekraczającą 60 km/h, a przy następnym semaforze z prędkością nieprzekraczającą 40 lub 60 km/h" - dwa światła pomarańczowe oraz pas pomarańczowy',
+            'S13a - "Jazda z prędkością nieprzekraczającą 60 km/h, a następny semafor wskazuje sygnał Stój" - dwa światła pomarańczowe oraz pas pomarańczowy'
+          ]
+        },
+        {
+          type: 'important',
+          value: 'Sygnał S1 ("Stój") jest sygnałem bezwzględnego zatrzymania pociągu. Semafory mogą być od 1-do 6-komorowych, z dodatkowymi pasami świetlnymi pod głowicą. Na semaforach wyświetla się obrazy sygnałowe koloru: czerwonego, zielonego, pomarańczowego lub białego. Obraz sygnałowy może być podawany jednym lub dwoma światłami jednocześnie. Pasy świetlne mogą być w kolorze zielonym lub pomarańczowym.'
+        }
+      ]
+    },
+    'syg-tarcza': {
+      title: 'Sygnały na tarczach ostrzegawczych',
+      description: 'Sygnały na tarczach ostrzegawczych świetlnych',
+      content: [
+        {
+          type: 'list',
+          title: 'Sygnały podstawowe',
+          items: [
+            'Os1 - "Semafor, do którego odnosi się tarcza, wskazuje sygnał Stój" - jedno światło pomarańczowe',
+            'Os2 - "Semafor, do którego odnosi się tarcza, wskazuje sygnał zezwalający na jazdę z największą dopuszczalną prędkością" - jedno światło zielone',
+            'Os3 - "Semafor, do którego odnosi się tarcza, wskazuje sygnał zezwalający na jazdę z prędkością nieprzekraczającą 100 km/h" - jedno światło zielone migające',
+            'Os4 - "Semafor, do którego odnosi się tarcza, wskazuje sygnał zezwalający na jazdę z prędkością nieprzekraczającą 40 lub 60 km/h" - jedno światło pomarańczowe migające'
+          ]
+        },
+        {
+          type: 'important',
+          value: 'Tarcze ostrzegawcze świetlne informują maszynistę o tym, jaki sygnał jest wyświetlany na semaforze, do którego się odnoszą. Stosowane są do ostrzegania o wskazaniach semaforów.'
+        }
+      ]
+    },
+    'syg-manewrowa': {
+      title: 'Tarcze manewrowe',
+      description: 'Sygnały na tarczach manewrowych',
+      content: [
+        {
+          type: 'list',
+          title: 'Sygnały na tarczach manewrowych kształtowych',
+          items: [
+            'M1 - "Jazda manewrowa zabroniona" - światło niebieskie',
+            'M2 - "Jazda manewrowa dozwolona" - światło białe'
+          ]
+        },
+        {
+          type: 'list',
+          title: 'Sygnały na tarczach manewrowych świetlnych',
+          items: [
+            'Ms1 - "Jazda manewrowa zabroniona" - światło niebieskie',
+            'Ms2 - "Jazda manewrowa dozwolona" - światło białe'
+          ]
+        },
+        {
+          type: 'important',
+          value: 'Tarcze manewrowe stosowane są wyłącznie dla pojazdów trakcyjnych manewrujących ze składem lub bez. Oznaczane są literami "Tm" z kolejnym numerem sygnalizatora.'
+        }
+      ]
+    },
+    'syg-wskazniki': {
+      title: 'Wskaźniki i sygnały dodatkowe',
+      description: 'Wskaźniki i sygnały dodatkowe na szlaku kolejowym',
+      content: [
+        {
+          type: 'list',
+          title: 'Wskaźniki podstawowe',
+          items: [
+            'W1 - "Wskaźnik usytuowania" - oznacza miejsce ustawienia tarczy ostrzegawczej dotyczącej semafora lub tarczy przejazdowej',
+            'W2 - "Wskaźniki kierunku jazdy" - oznacza kierunek wyjazdu pociągów',
+            'W3 - "Wskaźnik unieważnienia" - oznacza, że sąsiedni semafor lub tarcza zaporowa nie odnoszą się do toru, przy którym stoi wskaźnik',
+            'W4 - "Wskaźnik zatrzymania" - służy do oznaczenia miejsca na stacji, przystanku osobowym, do którego może dojechać czoło zatrzymującego się tam pociągu',
+            'W5 - "Wskaźnik przetaczania" - oznacza granicę przetaczania',
+            'W6 - "Wskaźnik ostrzegania" - oznacza, że należy podać sygnał Rp1 "Baczność"',
+            'W6a - "Wskaźnik przejazdowy" - informuje o przejeździe kolejowo-drogowym z systemem przejazdowym',
+            'W6b - "Wskaźnik ostrzegania przed przejazdem" - informuje o przejeździe kolejowo-drogowym bez systemu przejazdowego',
+            'W7 - "Wskaźnik robót torowych" - oznacza, że należy podać sygnał Rp1 "Baczność" dla ekip pracujących',
+            'W8 - "Wskaźnik ograniczenia prędkości" - oznacza konieczność zmniejszenia prędkości jazdy',
+            'W9 - "Wskaźnik odcinka ograniczonej prędkości" - oznacza początek lub koniec odcinka z ograniczoną prędkością'
+          ]
+        },
+        {
+          type: 'important',
+          value: 'Wskaźniki przekazują polecenia, nakazy i informacje związane z ruchem kolejowym poprzez napisy i symbole umieszczone na tablicach, wyświetlane przez latarnie lub inne układy świetlne.'
+        }
+      ]
+    },
+    'syg-reczne': {
+      title: 'Sygnały ręczne i przenośne',
+      description: 'Podstawowe sygnały ręczne',
+      content: [
+        {
+          type: 'list',
+          title: 'Sygnały podstawowe',
+          items: [
+            'Rm1 - "Stój" - czerwona chorągiewka lub czerwone światło',
+            'Rm2 - "Jazda" - zielona chorągiewka lub zielone światło',
+            'Rm3 - "Jazda z ograniczeniem prędkości" - żółta chorągiewka lub żółte światło',
+            'Rm4 - "Jazda z ograniczeniem prędkości" - zielona i żółta chorągiewka lub zielone i żółte światło'
+          ]
+        }
+      ]
+    }
+  };
+
+  function showProcedure(procedureId) {
+    const procedure = procedures[procedureId];
+    if (!procedure) return;
+
+    const contentDiv = document.getElementById('procedureContent');
+    let html = `
+      <div class="procedure-content">
+        <h3 class="procedure-title">${procedure.title}</h3>
+        <p class="procedure-description">${procedure.description}</p>
+        <div class="procedure-details">
+    `;
+
+    procedure.content.forEach(item => {
+      switch (item.type) {
+        case 'text':
+          html += `<p>${item.value}</p>`;
+          break;
+        case 'list':
+          html += item.title ? `<h4>${item.title}</h4>` : '';
+          html += '<ul class="procedure-steps">';
+          item.items.forEach((listItem, index) => {
+            html += `
+              <li class="procedure-step">
+                <span class="step-number">${index + 1}</span>
+                ${listItem}
+              </li>`;
+          });
+          html += '</ul>';
+          break;
+        case 'important':
+          html += `<div class="procedure-important" style="color: #b30000; margin: 15px 0;">⚠️ ${item.value}</div>`;
+          break;
+      }
+    });
+
+    html += `
+        </div>
+      </div>`;
+
+    contentDiv.innerHTML = html;
+  }
+
+  setInterval(updateHeaderInfo, 1000);
+
+  function logout() {
+    if (confirm('Czy na pewno chcesz się wylogować?')) {
+      loggedDrName = '';
+      loggedStation = '';
+      loginTime = null;
+      document.getElementById('mainApp').classList.add('hidden');
+      document.getElementById('login').classList.remove('hidden');
+      document.getElementById('drName').value = '';
+      document.getElementById('station').value = '';
+      
+      orderNumberO = 1;
+      orderNumberS = 1;
+      orderNumberN = 1;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const savedHistory = localStorage.getItem('orderHistory');
+    if (savedHistory) {
+      orderHistory = JSON.parse(savedHistory);
+      updateHistoryPanel();
+    }
+  });
+
+  function toggleHistory() {
+    document.getElementById('historyWindow').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+    updateHistoryPanel();
+  }
+
+  function addToHistory(orderType, orderNumber, content) {
+    const now = new Date();
+    const orderInfo = {
+      type: orderType,
+      number: orderNumber,
+      content: content,
+      timestamp: now.toLocaleString('pl-PL'),
+      drName: loggedDrName,
+      station: loggedStation
+    };
+
+    orderHistory.unshift(orderInfo);
+    if (orderHistory.length > 50) orderHistory.pop();
+    
+    localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+    updateHistoryPanel();
+  }
+
+  function updateHistoryPanel() {
+    const historyContent = document.getElementById('historyContent');
+    historyContent.innerHTML = orderHistory.map((order, index) => `
+      <div class="history-item">
+        <div class="history-item-header">
+          <span>Rozkaz ${order.type} nr ${order.number}</span>
+          <span>${order.timestamp}</span>
+        </div>
+        <div class="history-item-content">${order.content}</div>
+        <div class="history-controls">
+          <button class="history-btn" onclick="copyHistoryItem(${index})">📋 Kopiuj</button>
+          <button class="history-btn" onclick="deleteHistoryItem(${index})">🗑️ Usuń</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function copyHistoryItem(index) {
+    const order = orderHistory[index];
+    navigator.clipboard.writeText(order.content).then(() => {
+      alert('Rozkaz skopiowany do schowka!');
+    });
+  }
+
+  function deleteHistoryItem(index) {
+    if (confirm('Czy na pewno chcesz usunąć ten rozkaz z historii?')) {
+      orderHistory.splice(index, 1);
+      localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+      updateHistoryPanel();
+    }
+  }
+
+  function closeHistory() {
+    document.getElementById('historyWindow').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  document.getElementById('overlay').addEventListener('click', closeHistory);
+
+  function filterHistory() {
+    const typeFilter = document.getElementById('typeFilter').value;
+    const filteredHistory = typeFilter 
+      ? orderHistory.filter(order => order.type === typeFilter)
+      : orderHistory;
+
+    const historyContent = document.getElementById('historyContent');
+    historyContent.innerHTML = filteredHistory.map((order, index) => `
+      <div class="history-item">
+        <div class="history-item-header">
+          <span>Rozkaz ${order.type} nr ${order.number}</span>
+          <span>${order.timestamp}</span>
+        </div>
+        <div class="history-item-content">${order.content}</div>
+        <div class="history-controls">
+          <button class="history-btn" onclick="copyHistoryItem(${index})">📋 Kopiuj</button>
+          <button class="history-btn" onclick="deleteHistoryItem(${index})">🗑️ Usuń</button>
+        </div>
+      </div>
+    `).join('');
+
+    updateStats();
+  }
+
+  function updateStats() {
+    const stats = {
+      total: orderHistory.length,
+      O: orderHistory.filter(order => order.type === 'O').length,
+      S: orderHistory.filter(order => order.type === 'S').length,
+      N: orderHistory.filter(order => order.type === 'N').length
+    };
+
+    document.getElementById('totalOrders').textContent = stats.total;
+    document.getElementById('typeOOrders').textContent = stats.O;
+    document.getElementById('typeSOrders').textContent = stats.S;
+    document.getElementById('typeNOrders').textContent = stats.N;
+  }
+
+  function exportToPDF() {
+    const content = orderHistory.map(order => 
+      `${order.timestamp}\nRozkaz ${order.type} nr ${order.number}\n${order.content}\n\n`
+    ).join('-------------------\n');
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', `rozkazy_${new Date().toISOString().split('T')[0]}.txt`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('input, select, textarea');
+    forms.forEach(form => {
+      form.addEventListener('input', function() {
+        // updatePreview();
+        togglePreview();
+      });
+      form.addEventListener('change', function() {
+        // updatePreview();
+        togglePreview();
+      });
+    });
+  });
+
+  function togglePreview() {
+    const preview = document.getElementById('previewContainer');
+    preview.classList.remove('hidden');
+  }
+
+  function toggleNotes() {
+    const notesWindow = document.getElementById('notesWindow');
+    const overlay = document.getElementById('overlay');
+    notesWindow.classList.toggle('hidden');
+    overlay.classList.toggle('open');
+    if (!notesWindow.classList.contains('hidden')) {
+      displayNotes();
+    }
+  }
+
+  function addNote() {
+    const noteInput = document.getElementById('newNote');
+    const noteText = noteInput.value.trim();
+    
+    if (noteText) {
+      const note = {
+        id: Date.now(),
+        content: noteText,
+        timestamp: new Date().toLocaleString('pl-PL'),
+        author: loggedDrName,
+        station: loggedStation,
+        pinned: false
+      };
+
+      notes.unshift(note);
+      localStorage.setItem('drNotes', JSON.stringify(notes));
+      noteInput.value = '';
+      displayNotes(notes);
+    }
+  }
+
+  function deleteNote(id) {
+    if (confirm('Czy na pewno chcesz usunąć tę notatkę?')) {
+      notes = notes.filter(note => note.id !== id);
+      localStorage.setItem('drNotes', JSON.stringify(notes));
+      displayNotes();
+    }
+  }
+
+  function editNote(id) {
+    const note = notes.find(n => n.id === id);
+    if (note) {
+      const newContent = prompt('Edytuj notatkę:', note.content);
+      if (newContent !== null && newContent.trim() !== '') {
+        note.content = newContent.trim();
+        note.edited = true;
+        note.editTimestamp = new Date().toLocaleString('pl-PL');
+        localStorage.setItem('drNotes', JSON.stringify(notes));
+        displayNotes();
+      }
+    }
+  }
+
+  function displayNotes(notesToDisplay = notes) {
+    const notesList = document.getElementById('notesList');
+    if (notesList) {
+      notesList.innerHTML = notesToDisplay.map(note => `
+        <div class="note-item ${note.pinned ? 'pinned-note' : ''}">
+          <div class="note-header">
+            <div>
+              <strong>${note.author}</strong> | ${note.station}
+              <br>${note.timestamp}
+              ${note.edited ? `<br><em>Edytowano: ${note.editTimestamp}</em>` : ''}
+              ${note.pinned ? '<div class="pinned-indicator">📌 Przypięta</div>' : ''}
+            </div>
+            <button class="pin-button" onclick="togglePin(${note.id})">
+              ${note.pinned ? '📌' : '📍'}
+            </button>
+          </div>
+          <div class="note-content">${note.content}</div>
+          <div class="note-actions">
+            <button onclick="editNote(${note.id})" class="note-action-btn">✏️ Edytuj</button>
+            <button onclick="deleteNote(${note.id})" class="note-action-btn">🗑️ Usuń</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  function filterNotes(type) {
+    const filters = document.querySelectorAll('.notes-filter');
+    filters.forEach(filter => filter.classList.remove('active'));
+    event.target.classList.add('active');
+
+    let filteredNotes = [...notes];
+    
+    if (type === 'pinned') {
+      filteredNotes = filteredNotes.filter(note => note.pinned);
+    }
+
+    filteredNotes.sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return 0;
+    });
+
+    displayNotes(filteredNotes);
+  }
+
+  function togglePin(id) {
+    const note = notes.find(n => n.id === id);
+    if (note) {
+      note.pinned = !note.pinned;
+      localStorage.setItem('drNotes', JSON.stringify(notes));
+      displayNotes(notes);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    updateTags();
+    const tagInput = document.getElementById('tagInput');
+    if (tagInput) {
+      tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          addTag();
+        }
+      });
+    }
+  });
+
+  function toggleProcedures() {
+    const proceduresWindow = document.getElementById('proceduresWindow');
+    const overlay = document.getElementById('overlay');
+    proceduresWindow.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleCategory(categoryId) {
+    const category = document.getElementById(categoryId);
+    category.classList.toggle('open');
+  }
+
+  document.getElementById('procedureSearch').addEventListener('input', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.procedure-item');
+    
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(searchText)) {
+        item.style.display = 'block';
+        item.closest('.category-content').classList.add('open');
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+
+  function handleZapowiedziClick() {
+    alert('Generator zapowiedzi - dostępny wkrótce!');
+  }
+
+  function toggleOption1N() {
+    const option1 = document.getElementById("option1N").checked;
+    document.getElementById("option1Details").classList.toggle('hidden', !option1);
+  }
+
+  function toggleOption2N() {
+    const option2 = document.getElementById("option2N").checked;
+    const container = document.getElementById("option2Container");
+    if (container) {
+      container.classList.toggle('hidden', !option2);
+    }
+  }
+
+  function toggleSubOption(option) {
+    const checkbox = document.getElementById(`option${option}N`).checked;
+    const details = document.getElementById(`option${option}Details`);
+    if (details) {
+      details.classList.toggle('hidden', !checkbox);
+    }
+  }
+
+  function toggleOption3N() {
+    const option3 = document.getElementById("option3N").checked;
+    const container = document.getElementById("option3Container");
+    if (container) {
+      container.classList.toggle('hidden', !option3);
+    }
+  }
+
+  function toggleOption4N() {
+    const option4 = document.getElementById("option4N").checked;
+    document.getElementById("option4Details").classList.toggle('hidden', !option4);
+  }
+
+  function toggleOption5N() {
+    const option5 = document.getElementById("option5N").checked;
+    document.getElementById("option5Details").classList.toggle('hidden', !option5);
+  }
+
+  function toggleOption6N() {
+    const option6 = document.getElementById("option6N").checked;
+    document.getElementById("otherTextN").classList.toggle('hidden', !option6);
+  }
+
+  function generateRozkazN(isPreview = false) {
+    const trainNumber = document.getElementById("trainNumberN").value;
+    const currentDate = new Date().toLocaleDateString('pl-PL');
+    let output = `Rozkaz pisemny "N" nr ${orderNumberN} dla pociągu ${trainNumber} dnia ${currentDate}:\n\n`;
+
+    if (document.getElementById("option1N").checked) {
+      const odKm = document.getElementById("odKm").value;
+      const doKm = document.getElementById("doKm").value;
+      const torZamkniety = document.getElementById("torZamkniety").value;
+      const torRuch = document.getElementById("torRuch").value;
+      output += `1) Od ${odKm} do ${doKm} tor nr ${torZamkniety} jest zamknięty, ruch jednotorowy dwukierunkowy wprowadzono po torze nr ${torRuch}.\n`;
+    }
+
+    if (document.getElementById("option2N").checked) {
+      const sygnal = document.getElementById("rozkazSignalN").value;
+      output += `2) Zezwalam po otrzymaniu ${sygnal === 'tylkoRozkaz' ? 'tego rozkazu' : 'sygnału "Nakaz jazdy"'}:`;
+
+      if (document.getElementById("option21N").checked) {
+        const semafor = document.getElementById("semafor21").value;
+        const kierunek = document.getElementById("kierunek21").value;
+        const torKierunek = document.getElementById("torKierunek21").value;
+        const torNr = document.getElementById("torNr21").value;
+        output += `\n   2.1) przejechać obok wskazującego sygnał "Stój" semafora wyjazdowego ${semafor} i wyjechać w kierunku ${kierunek} na tor szlakowy ${torKierunek} nr ${torNr}`;
+      }
+
+      if (document.getElementById("option22N").checked) {
+        const semafor = document.getElementById("semafor22").value;
+        const kierunek = document.getElementById("kierunek22").value;
+        const torKierunek = document.getElementById("torKierunek22").value;
+        const torNr = document.getElementById("torNr22").value;
+        output += `\n   2.2) przejechać obok wskazującego sygnał "Stój" semafora drogowskazowego ${semafor} i wyjechać w kierunku ${kierunek} na tor szlakowy ${torKierunek} nr ${torNr}`;
+      }
+
+      if (document.getElementById("option23N").checked) {
+        const semafor = document.getElementById("semafor23").value;
+        const kierunek = document.getElementById("kierunek23").value;
+        const torKierunek = document.getElementById("torKierunek23").value;
+        const torNr = document.getElementById("torNr23").value;
+        output += `\n   2.3) przejechać obok wskazującego sygnał "Stój" semafora wjazdowego ${semafor} i wyjechać w kierunku ${kierunek} na tor szlakowy ${torKierunek} nr ${torNr}`;
+      }
+
+      if (document.getElementById("option24N").checked) {
+        const torWyjazd = document.getElementById("torWyjazd24").value;
+        const kierunek = document.getElementById("kierunek24").value;
+        const torKierunek = document.getElementById("torKierunek24").value;
+        const torNr = document.getElementById("torNr24").value;
+        output += `\n   2.4) wyjechać z toru nr ${torWyjazd} w kierunku ${kierunek} na tor szlakowy ${torKierunek} nr ${torNr}`;
+      }
+    }
+
+    if (document.getElementById("option3N").checked) {
+      const kierunekPush = document.getElementById("kierunekPush").value;
+      const doKmPush = document.getElementById("doKmPush").value;
+      const torPowrot = document.getElementById("torPowrot").value;
+      const godzPowrot = document.getElementById("godzPowrot").value;
+      const minPowrot = document.getElementById("minPowrot").value;
+      output += `\n3) Jazda - popychanie pociągu w kierunku ${kierunekPush} do km ${doKmPush}, powrót po torze lewym nr ${torPowrot} najpóźniej o godz. ${godzPowrot}:${minPowrot}.`;
+    }
+
+    if (document.getElementById("option4N").checked) {
+      const torWjazd = document.getElementById("torWjazd").value;
+      const miejsceWjazdu = document.getElementById("miejsceWjazdu").value;
+      const nazwaWjazdu = document.getElementById("nazwaWjazdu").value;
+      output += `\n4) Wjazd z toru szlakowego nr ${torWjazd} na ${miejsceWjazdu} ${nazwaWjazdu}.`;
+
+      if (document.getElementById("option41N").checked) {
+        const stronaSz = document.getElementById("stronaSz").value;
+        output += `\n   4.1) sygnał zastępczy "Sz" na osobnym urządzeniu z ${stronaSz} strony toru.`;
+      }
+
+      if (document.getElementById("option42N").checked) {
+        output += `\n   4.2) rozkazu pisemnego "N".`;
+      }
+    }
+
+    if (document.getElementById("option5N").checked) {
+      const torWjazd5 = document.getElementById("torWjazd5").value;
+      const kierunekWjazd5 = document.getElementById("kierunekWjazd5").value;
+      const miejsceWjazdu5 = document.getElementById("miejsceWjazdu5").value;
+      const nazwaWjazdu5 = document.getElementById("nazwaWjazdu5").value;
+      const semaforStoj5 = document.getElementById("semaforStoj5").value;
+      output += `\n5) Zezwalam wjechać z toru szlakowego nr ${torWjazd5} z kierunku ${kierunekWjazd5} na ${miejsceWjazdu5} ${nazwaWjazdu5}, przejechać obok sygnału "Stój" na ${semaforStoj5}.`;
+    }
+
+    if (document.getElementById("option6N").checked) {
+      const otherTextN = document.getElementById("otherTextN").value;
+      output += `\n6) Inne: ${otherTextN}`;
+    }
+
+    output += `\n\nDyżurny ruchu: ${loggedDrName}`;
+    output += `\nStacja: ${loggedStation}`;
+    output += "\nPodpis maszynisty/kier. poc.: _____________";
+
+    if (!isPreview) {
+      document.getElementById("output").textContent = output;
+      orderNumberN++;
+      addToHistory('N', orderNumberN - 1, output);
+    }
+    return output;
+  }
+
+  function formatOnlineTime(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    
+    const displayHours = hours.toString().padStart(2, '0');
+    const displayMinutes = (minutes % 60).toString().padStart(2, '0');
+    const displaySeconds = (seconds % 60).toString().padStart(2, '0');
+    
+    return `${displayHours}:${displayMinutes}:${displaySeconds}`;
+  }
+
+  function updateHeaderInfo() {
+    const now = new Date();
+    const dateTimeString = now.toLocaleString("pl-PL", {
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    document.getElementById("dateTime").textContent = dateTimeString;
+
+    if (loggedDrName && loggedStation) {
+      document.getElementById("userInfo").textContent = `${loggedDrName} | ${loggedStation}`;
+    }
+
+    if (loginTime) {
+      const onlineTimeMs = now - loginTime;
+      document.getElementById("onlineTime").textContent = `Online: ${formatOnlineTime(onlineTimeMs)}`;
+    }
+  }
+
+  function showTab(tabId) {
+    const containers = document.querySelectorAll('.container:not(#login):not(#mainApp)');
+    containers.forEach(container => {
+      container.classList.add('hidden');
+    });
+
+    document.querySelectorAll('.tabContent').forEach(tab => {
+      tab.classList.add('hidden');
+    });
+
+    document.getElementById(tabId).classList.remove('hidden');
+    if (tabId === 'generatorRozkladow') {
+      renderRozkladStacjeLista();
+    }
+  }
+
+  function saveLogin() {
+    const drName = document.getElementById("drName").value;
+    const station = document.getElementById("station").value;
+    if (drName && station) {
+      loggedDrName = drName;
+      loggedStation = station;
+      loginTime = new Date();
+      document.getElementById("login").classList.add('hidden');
+      document.getElementById("mainApp").classList.remove('hidden');
+      updateHeaderInfo();
+    } else {
+      alert("Proszę podać wszystkie dane.");
+    }
+  }
+
+  function showLoading() {
+    document.getElementById('loadingSpinner').classList.add('active');
+  }
+
+  function hideLoading() {
+    document.getElementById('loadingSpinner').classList.remove('active');
+  }
+
+  async function generateRozkazO(isPreview = false) {
+    if (!isPreview) showLoading();
+    
+    if (!isPreview) await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const trainNumber = document.getElementById("trainNumberO").value;
+    const option1 = document.getElementById("option1O").checked;
+    const option2 = document.getElementById("option2O").checked;
+    const option3 = document.getElementById("option3O").checked;
+    const otherText = document.getElementById("otherTextO").value;
+    const currentDate = new Date().toLocaleDateString('pl-PL');
+
+    let output = `Rozkaz pisemny "O" nr ${isPreview ? '...' : orderNumberO} dla pociągu ${trainNumber} dnia ${currentDate}:\n\n`;
+    
+    if (option1) output += "1) zmniejszyć prędkość jazdy i zachować ostrożność,\n";
+    if (option2) output += "2) jechać ostrożnie (skrót j.o.)\n";
+    if (option3 && otherText) output += `3) inne: ${otherText}\n`;
+
+    output += `\nDyżurny ruchu: ${loggedDrName}`;
+    output += `\nStacja: ${loggedStation}`;
+    output += "\nPodpis maszynisty/kier. poc.: _____________";
+
+    if (!isPreview) {
+      document.getElementById("output").textContent = output;
+      orderNumberO++;
+      addToHistory('O', orderNumberO - 1, output);
+    }
+    hideLoading();
+    return output;
+  }
+
+  function generateRozkazS(isPreview = false) {
+    const trainNumber = document.getElementById("trainNumberS").value;
+    const zezwolenie = document.getElementById("zezwolenie").checked;
+    const sygnal = document.getElementById("rozkazSignal").value;
+    const textWyjazd = document.getElementById("textWyjazd").value;
+    const textDrogowskaz = document.getElementById("textDrogowskaz").value;
+    const textTorBezSemafora = document.getElementById("textTorBezSemafora").value;
+    const currentDate = new Date().toLocaleDateString('pl-PL');
+
+    const option2 = document.getElementById("option2").checked;
+    const wjazdowy = document.getElementById("inputWjazdowy").value;
+    const drogowskazowy = document.getElementById("inputDrogowskazowy").value;
+    const odstepowy = document.getElementById("inputOdstepowy").value;
+
+    const option3 = document.getElementById("option3").checked;
+    const kmOd = document.getElementById("kmOd").value;
+    const kmDo = document.getElementById("kmDo").value;
+    const lastTrainNumber = document.getElementById("lastTrainNumber").value;
+    const stationName = document.getElementById("stationName").value;
+    const arrivalTime = document.getElementById("arrivalTimeS").value;
+
+    const option4 = document.getElementById("option4").checked;
+    const otherText = document.getElementById("otherText").value;
+
+    let output = `Rozkaz pisemny "S" nr ${orderNumberS} dla pociągu ${trainNumber} dnia ${currentDate}:\n\n`;
+    
+    if (zezwolenie) {
+      output += `1) Zezwalam po otrzymaniu ${sygnal === 'tylkoRozkaz' ? 'tylko tego rozkazu' : 'sygnału "Nakaz jazdy"'}\n`;
+      if (textWyjazd) output += `   1.1) Przejechać obok wskazującego sygnał "Stój" semafora wyjazdowego: ${textWyjazd}\n`;
+      if (textDrogowskaz) output += `   1.2) Przejechać obok wskazującego sygnał "Stój" semafora drogowskazowego: ${textDrogowskaz}\n`;
+      if (textTorBezSemafora) output += `   1.3) Wyjechać z toru nr ${textTorBezSemafora} nie posiadającego semafora wyjazdowego\n`;
+    }
+
+    if (option2) {
+      output += "2) Zezwalam przejechać obok wskazującego sygnał \"Stój\" semafora:\n";
+      if (wjazdowy) output += `   2.1) wjazdowego: ${wjazdowy}\n`;
+      if (drogowskazowy) output += `   2.2) drogowskazowego: ${drogowskazowy}\n`;
+      if (odstepowy) output += `   2.3) odstępowego: ${odstepowy}\n`;
+    }
+
+    if (option3 && kmOd && kmDo && lastTrainNumber && stationName && arrivalTime) {
+      output += `3) Od ${kmOd} do ${kmDo} ruch pociągów prowadzony jest w odstępie posterunków następczych. Wskazania semaforów SBL są nieważne. Zachować ostrożność od ostatniego semafora ze wskaźnikiem "W 18". Szlak wolny. Ostatni pociąg nr ${lastTrainNumber} przybył do ${stationName} o godz ${arrivalTime}.\n`;
+    }
+
+    if (option4 && otherText) {
+      output += `4) Inne: ${otherText}\n`;
+    }
+
+    output += `\nDyżurny ruchu: ${loggedDrName}`;
+    output += `\nStacja: ${loggedStation}`;
+    output += "\nPodpis maszynisty/kier. poc.: _____________";
+
+    if (!isPreview) {
+      document.getElementById("output").textContent = output;
+      orderNumberS++;
+      addToHistory('S', orderNumberS - 1, output);
+    }
+    return output;
+  }
+
+  function toggleRozkazForm() {
+    const rozkazType = document.getElementById("rozkazType").value;
+    if (rozkazType === 'O') {
+      document.getElementById("formO").classList.remove('hidden');
+      document.getElementById("formS").classList.add('hidden');
+      document.getElementById("formN").classList.add('hidden');
+    } else if (rozkazType === 'S') {
+      document.getElementById("formO").classList.add('hidden');
+      document.getElementById("formS").classList.remove('hidden');
+      document.getElementById("formN").classList.add('hidden');
+    } else {
+      document.getElementById("formO").classList.add('hidden');
+      document.getElementById("formS").classList.add('hidden');
+      document.getElementById("formN").classList.remove('hidden');
+    }
+  }
+
+  function copyToClipboard() {
+    const output = document.getElementById("output").textContent;
+    navigator.clipboard.writeText(output).then(() => {
+      alert('Rozkaz skopiowany do schowka!');
+    }).catch(err => {
+      console.error('Błąd podczas kopiowania do schowka:', err);
+      alert('Nie udało się skopiować rozkazu do schowka. Spróbuj ponownie.');
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('input, select, textarea');
+    forms.forEach(form => {
+      form.addEventListener('input', function() {
+        // updatePreview();
+        togglePreview();
+      });
+      form.addEventListener('change', function() {
+        // updatePreview();
+        togglePreview();
+      });
+    });
+  });
+
+  let chatMessages = JSON.parse(localStorage.getItem('drChatMessages') || '[]');
+
+  function toggleChat() {
+    const chatWindow = document.getElementById('chatWindow');
+    const overlay = document.getElementById('overlay');
+    chatWindow.classList.toggle('hidden');
+    overlay.classList.toggle('open');
+    if (!chatWindow.classList.contains('hidden')) {
+      displayChatMessages();
+    }
+  }
+
+  function sendMessage() {
+    const chatInput = document.getElementById('chatInput');
+    const messageText = chatInput.value.trim();
+    
+    if (messageText) {
+      const message = {
+        id: Date.now(),
+        content: messageText,
+        timestamp: new Date().toLocaleString('pl-PL'),
+        author: loggedDrName,
+        station: loggedStation
+      };
+
+      chatMessages.push(message);
+      localStorage.setItem('drChatMessages', JSON.stringify(chatMessages));
+      chatInput.value = '';
+      displayChatMessages();
+    }
+  }
+
+  function displayChatMessages() {
+    const chatMessagesDiv = document.getElementById('chatMessages');
+    if (chatMessagesDiv) {
+      chatMessagesDiv.innerHTML = chatMessages.map(message => `
+        <div class="chat-message">
+          <div class="message-header">
+            <div>
+              <strong>${message.author}</strong> | ${message.station}
+              <br>${message.timestamp}
+            </div>
+          </div>
+          <div class="message-content">${message.content}</div>
+        </div>
+      `).join('');
+      chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    }
+  }
+
+  function updateAnnouncementPreview() {
+    const trainNumber = document.getElementById('trainNumberAnn').value;
+    const trainAction = document.getElementById('trainAction').value;
+    const startStation = document.getElementById('startStation').value;
+    const endStation = document.getElementById('endStation').value;
+    const viaStations = document.getElementById('viaStations').value;
+    const operator = document.getElementById('operator').value;
+    const category = document.getElementById('category').value;
+    const trainName = document.getElementById('trainName').value;
+    const platform = document.getElementById('platform').value;
+    const track = document.getElementById('track').value;
+    const arrivalTime = document.getElementById('arrivalTime').value;
+    const departureTime = document.getElementById('departureTime').value;
+    const delay = document.getElementById('delay').value;
+
+    let text = 'Uwaga! Pociąg ';
+    if (category) text += category + ' ';
+    if (trainNumber) text += trainNumber + ' ';
+    if (trainName) text += '"' + trainName + '" ';
+    text += 'relacji ' + startStation + ' – ' + endStation;
+    if (viaStations) text += ' przez ' + viaStations;
+
+    if (trainAction === 'przyjedzie') {
+      text += ' przyjedzie na tor ' + track + ' przy peronie ' + platform + '.';
+      if (arrivalTime) text += ' Planowy przyjazd pociągu o godz. ' + arrivalTime + '.';
+      if (delay) text += ' Pociąg opóźniony o około ' + delay + ' minut. Za opóźnienie pociągu przepraszamy.';
+    } else if (trainAction === 'odjedzie') {
+      text += ' odjedzie z toru ' + track + ' przy peronie ' + platform + '.';
+      if (departureTime) text += ' Planowy odjazd pociągu o godz. ' + departureTime + '.';
+      if (delay) text += ' Pociąg opóźniony o około ' + delay + ' minut. Za opóźnienie pociągu przepraszamy.';
+      text += ' Prosimy zachować ostrożność i nie zbliżać się do krawędzi peronu. Życzymy Państwu przyjemnej podróży.';
+    } else if (trainAction === 'stoi') {
+      text += ' stoi na torze ' + track + ' przy peronie ' + platform + '.';
+      if (arrivalTime) text += ' Przyjazd pociągu o godz. ' + arrivalTime + '.';
+      if (departureTime) text += ' Odjazd pociągu o godz. ' + departureTime + '.';
+      if (delay) text += ' Pociąg opóźniony o około ' + delay + ' minut. Za opóźnienie pociągu przepraszamy.';
+    } else if (trainAction === 'przejedzie') {
+      text = 'Uwaga! Przez stację przejedzie pociąg, bez zatrzymania! Prosimy zachować ostrożność i odsunąć się od krawędzi peronu!';
+    }
+
+    document.getElementById('announcementOutput').textContent = text;
+  }
+
+  function generateAnnouncement() {
+    updateAnnouncementPreview();
+  }
+
+  function copyAnnouncement() {
+    const text = document.getElementById('announcementOutput').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Zapowiedź skopiowana do schowka!');
+    });
+  }
+
+  // Podgląd na żywo
+  ['trainNumberAnn','trainAction','startStation','endStation','viaStations','operator','category','trainName','platform','track','arrivalTime','departureTime','delay']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', updateAnnouncementPreview);
+        el.addEventListener('change', updateAnnouncementPreview);
+      }
+    });
+
+  let speechSynth = window.speechSynthesis;
+  let speaking = false;
+  let currentUtterance = null;
+
+  // Inicjalizacja głosów
+  function initVoices() {
+    const voiceSelect = document.getElementById('voiceSelect');
+    voiceSelect.innerHTML = '';
+    
+    const voices = speechSynth.getVoices();
+    
+    // Filtruj i sortuj głosy - polskie na początku, damskie przed męskimi
+    const polishVoices = voices.filter(voice => voice.lang.includes('pl'));
+    const otherVoices = voices.filter(voice => !voice.lang.includes('pl'));
+    
+    // Funkcja dodająca opcję do selecta
+    const addOption = (voice) => {
+      const option = document.createElement('option');
+      option.value = voice.name;
+      option.textContent = `${voice.name} (${voice.lang})${voice.name.includes('female') ? ' - damski' : ''}`;
+      voiceSelect.appendChild(option);
+    };
+    
+    // Dodaj polskie głosy
+    polishVoices.forEach(addOption);
+    
+    // Dodaj pozostałe głosy
+    otherVoices.forEach(addOption);
+    
+    // Wybierz domyślnie pierwszy polski głos damski lub pierwszy polski głos
+    const defaultVoice = polishVoices.find(v => v.name.includes('female')) || polishVoices[0];
+    if (defaultVoice) {
+      voiceSelect.value = defaultVoice.name;
+    }
+  }
+
+  // Nasłuchuj na załadowanie głosów
+  speechSynth.onvoiceschanged = initVoices;
+
+  // Aktualizacja wyświetlanych wartości kontrolek
+  document.getElementById('rateRange').addEventListener('input', (e) => {
+    document.getElementById('rateValue').textContent = e.target.value;
+  });
+
+  document.getElementById('volumeRange').addEventListener('input', (e) => {
+    document.getElementById('volumeValue').textContent = e.target.value;
+  });
+
+  function playAnnouncement() {
+    if (speaking) {
+      stopAnnouncement();
+    }
+
+    const text = document.getElementById('announcementOutput').textContent;
+    if (!text) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Ustaw wybrany głos
+    const voices = speechSynth.getVoices();
+    const selectedVoice = voices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+    if (selectedVoice) utterance.voice = selectedVoice;
+    
+    // Ustaw parametry mowy
+    utterance.rate = parseFloat(document.getElementById('rateRange').value);
+    utterance.volume = parseFloat(document.getElementById('volumeRange').value);
+    utterance.lang = 'pl-PL';
+
+    // Obsługa zdarzeń
+    utterance.onstart = () => {
+      speaking = true;
+    };
+    
+    utterance.onend = () => {
+      speaking = false;
+      currentUtterance = null;
+    };
+
+    currentUtterance = utterance;
+    speechSynth.speak(utterance);
+  }
+
+  function stopAnnouncement() {
+    if (speaking) {
+      speaking = false;
+      speechSynth.cancel();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
+
+    // Rejestracja eventów dla generatora zapowiedzi
+    [
+      'trainNumberAnn','trainAction','startStation','endStation','viaStations',
+      'operator','category','trainName','platform','track','arrivalTime','departureTime','delay'
+    ].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', updateAnnouncementPreview);
+        el.addEventListener('change', updateAnnouncementPreview);
+      }
+    });
+
+    // Wymuś podgląd na starcie
+    updateAnnouncementPreview();
+  });
+
+  console.log('arrivalTime:', document.getElementById('arrivalTime').value);
+
+  let announcementHistory = JSON.parse(localStorage.getItem('announcementHistory') || '[]');
+
+  function toggleAnnouncementHistory() {
+    document.getElementById('announcementHistoryWindow').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+    updateAnnouncementHistoryPanel();
+  }
+
+  function closeAnnouncementHistory() {
+    document.getElementById('announcementHistoryWindow').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  function addToAnnouncementHistory(announcementType, content) {
+    const now = new Date();
+    const announcementInfo = {
+      type: announcementType,
+      content: content,
+      timestamp: now.toLocaleString('pl-PL'),
+      drName: loggedDrName,
+      station: loggedStation
+    };
+
+    announcementHistory.unshift(announcementInfo);
+    if (announcementHistory.length > 50) announcementHistory.pop();
+    
+    localStorage.setItem('announcementHistory', JSON.stringify(announcementHistory));
+    updateAnnouncementHistoryPanel();
+  }
+
+  function updateAnnouncementHistoryPanel() {
+    const historyContent = document.getElementById('announcementHistoryContent');
+    historyContent.innerHTML = announcementHistory.map((announcement, index) => `
+      <div class="history-item">
+        <div class="history-item-header">
+          <span>${getAnnouncementTypeName(announcement.type)}</span>
+          <span>${announcement.timestamp}</span>
+        </div>
+        <div class="history-item-content">${announcement.content}</div>
+        <div class="history-controls">
+          <button class="history-btn" onclick="copyAnnouncementHistoryItem(${index})">📋 Kopiuj</button>
+          <button class="history-btn" onclick="deleteAnnouncementHistoryItem(${index})">🗑️ Usuń</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function getAnnouncementTypeName(type) {
+    const types = {
+      'przyjedzie': 'Zapowiedź przyjazdu',
+      'odjedzie': 'Zapowiedź odjazdu',
+      'stoi': 'Zapowiedź postoju',
+      'przejedzie': 'Zapowiedź przejazdu bez zatrzymania'
+    };
+    return types[type] || 'Zapowiedź';
+  }
+
+  function copyAnnouncementHistoryItem(index) {
+    const announcement = announcementHistory[index];
+    navigator.clipboard.writeText(announcement.content).then(() => {
+      alert('Zapowiedź skopiowana do schowka!');
+    });
+  }
+
+  function deleteAnnouncementHistoryItem(index) {
+    if (confirm('Czy na pewno chcesz usunąć tę zapowiedź z historii?')) {
+      announcementHistory.splice(index, 1);
+      localStorage.setItem('announcementHistory', JSON.stringify(announcementHistory));
+      updateAnnouncementHistoryPanel();
+    }
+  }
+
+  function filterAnnouncementHistory() {
+    const typeFilter = document.getElementById('announcementTypeFilter').value;
+    const filteredHistory = typeFilter 
+      ? announcementHistory.filter(announcement => announcement.type === typeFilter)
+      : announcementHistory;
+
+    const historyContent = document.getElementById('announcementHistoryContent');
+    historyContent.innerHTML = filteredHistory.map((announcement, index) => `
+      <div class="history-item">
+        <div class="history-item-header">
+          <span>${getAnnouncementTypeName(announcement.type)}</span>
+          <span>${announcement.timestamp}</span>
+        </div>
+        <div class="history-item-content">${announcement.content}</div>
+        <div class="history-controls">
+          <button class="history-btn" onclick="copyAnnouncementHistoryItem(${index})">📋 Kopiuj</button>
+          <button class="history-btn" onclick="deleteAnnouncementHistoryItem(${index})">🗑️ Usuń</button>
+        </div>
+      </div>
+    `).join('');
+
+    updateAnnouncementStats();
+  }
+
+  function updateAnnouncementStats() {
+    const stats = {
+      total: announcementHistory.length,
+      arrival: announcementHistory.filter(a => a.type === 'przyjedzie').length,
+      departure: announcementHistory.filter(a => a.type === 'odjedzie').length,
+      noStop: announcementHistory.filter(a => a.type === 'przejedzie').length
+    };
+
+    document.getElementById('totalAnnouncements').textContent = stats.total;
+    document.getElementById('typeArrivalAnnouncements').textContent = stats.arrival;
+    document.getElementById('typeDepartureAnnouncements').textContent = stats.departure;
+    document.getElementById('typeNoStopAnnouncements').textContent = stats.noStop;
+  }
+
+  function exportAnnouncementsToPDF() {
+    const content = announcementHistory.map(announcement => 
+      `${announcement.timestamp}\n${getAnnouncementTypeName(announcement.type)}\n${announcement.content}\n\n`
+    ).join('-------------------\n');
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', `zapowiedzi_${new Date().toISOString().split('T')[0]}.txt`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  function downloadAnnouncement() {
+    const text = document.getElementById('announcementOutput').textContent;
+    downloadAnnouncementAsMP3(text);
+  }
+
+  function downloadAnnouncementAsMP3(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = speechSynth.getVoices();
+    const selectedVoice = voices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+    if (selectedVoice) utterance.voice = selectedVoice;
+    
+    utterance.rate = parseFloat(document.getElementById('rateRange').value);
+    utterance.volume = parseFloat(document.getElementById('volumeRange').value);
+    utterance.lang = 'pl-PL';
+
+    // Konwersja na MP3
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const mediaRecorder = new MediaRecorder(new MediaStream());
+    const chunks = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'audio/mp3' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `zapowiedz_${new Date().toISOString().split('T')[0]}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    mediaRecorder.start();
+    speechSynth.speak(utterance);
+    setTimeout(() => mediaRecorder.stop(), utterance.text.length * 1000 / utterance.rate);
+  }
+
+  // Modyfikacja funkcji generateAnnouncement
+  function generateAnnouncement() {
+    updateAnnouncementPreview();
+    const trainAction = document.getElementById('trainAction').value;
+    const content = document.getElementById('announcementOutput').textContent;
+    addToAnnouncementHistory(trainAction, content);
+  }
+
+  // --- USTAWIENIA MOTYWU I AKCENTU ---
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsPanel = document.getElementById('settingsPanel');
+  const themeSelect = document.getElementById('themeSelect');
+  const accentSelect = document.getElementById('accentSelect');
+
+  settingsBtn.addEventListener('click', function() {
+    settingsPanel.classList.toggle('hidden');
+  });
+  function closeSettings() {
+    settingsPanel.classList.add('hidden');
+  }
+
+  themeSelect.addEventListener('change', applyTheme);
+  accentSelect.addEventListener('change', applyAccent);
+
+  function applyTheme() {
+    const theme = themeSelect.value;
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('dpdr-theme', theme);
+  }
+  function applyAccent() {
+    const accent = accentSelect.value;
+    document.body.setAttribute('data-accent', accent);
+    localStorage.setItem('dpdr-accent', accent);
+  }
+  // Inicjalizacja ustawień z localStorage
+  (function() {
+    const savedTheme = localStorage.getItem('dpdr-theme') || 'dark';
+    const savedAccent = localStorage.getItem('dpdr-accent') || 'red';
+    themeSelect.value = savedTheme;
+    accentSelect.value = savedAccent;
+    applyTheme();
+    applyAccent();
+  })();
+
+  // --- STYLE DYNAMICZNE ---
+  const accentColors = {
+    red: '#b30000',
+    gold: '#ffd700',
+    blue: '#2196f3',
+    green: '#43a047'
+  };
+  function updateAccentStyles() {
+    const accent = accentSelect.value;
+    const color = accentColors[accent] || '#b30000';
+    document.documentElement.style.setProperty('--accent-color', color);
+    // Ikona ustawień
+    document.querySelectorAll('.settings-icon').forEach(icon => {
+      icon.style.color = color;
+    });
+  }
+  accentSelect.addEventListener('change', updateAccentStyles);
+  (function() { updateAccentStyles(); })();
+
+  // --- MOTYW JASNY/CIEMNY ---
+  function updateThemeStyles() {
+    const theme = themeSelect.value;
+    document.querySelectorAll('.container, .history-window, .notes-window, .procedures-window, .chat-window').forEach(el => {
+      el.style.background = '';
+      el.style.color = '';
+    });
+  }
+  themeSelect.addEventListener('change', updateThemeStyles);
+  (function() { updateThemeStyles(); })();
+
+  // --- SCENERIE ONLINE SWDR4 ---
+  let swdr4Timer = null;
+  function fetchSceneries() {}
+  function renderSceneriesTable() {}
+  
+  // Funkcje do obsługi statystyk
+  function updateStatistics() {
+    const today = new Date().toLocaleDateString();
+    const statistics = JSON.parse(localStorage.getItem('statistics')) || { today: 0, total: 0, station: {} };
+    
+    document.getElementById('todayCount').textContent = statistics.today;
+    document.getElementById('totalCount').textContent = statistics.total;
+    document.getElementById('stationCount').textContent = statistics.station[selectedStation] || 0;
+    
+    // Generowanie wykresów (uproszczone)
+    const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+    const typesCtx = document.getElementById('typesChart').getContext('2d');
+    
+    // Przykładowe dane dla wykresów
+    new Chart(ordersCtx, {
+      type: 'line',
+      data: {
+        labels: ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'],
+        datasets: [{
+          label: 'Liczba rozkazów',
+          data: [12, 19, 3, 5, 2, 3, 7],
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      }
+    });
+    
+    new Chart(typesCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Odjazd', 'Przyjazd', 'Zmiana toru'],
+        datasets: [{
+          label: 'Typy rozkazów',
+          data: [12, 19, 3],
+          backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)']
+        }]
+      }
+    });
+  }
+
+  // Funkcje do obsługi historii logowań
+  function updateLoginHistory() {
+    const loginHistory = JSON.parse(localStorage.getItem('loginHistory')) || [];
+    const tbody = document.getElementById('loginHistoryBody');
+    tbody.innerHTML = '';
+    
+    loginHistory.forEach(entry => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${entry.date}</td>
+        <td>${entry.station}</td>
+        <td>${entry.time}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    
+    // Aktualizacja statystyk czasu
+    const todayTime = loginHistory.filter(entry => entry.date === new Date().toLocaleDateString())
+      .reduce((sum, entry) => sum + parseInt(entry.time), 0);
+    const totalTime = loginHistory.reduce((sum, entry) => sum + parseInt(entry.time), 0);
+    
+    document.getElementById('todayTime').textContent = `${todayTime} godzin`;
+    document.getElementById('totalTime').textContent = `${totalTime} godzin`;
+  }
+
+  // Funkcje do obsługi przypomnień
+  document.getElementById('reminderForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+    const text = document.getElementById('reminderText').value.trim();
+    const minutes = parseInt(document.getElementById('reminderMinutes').value);
+    
+    const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+    reminders.push({ text, minutes, date: new Date().toLocaleString() });
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+    
+    updateRemindersList();
+    this.reset();
+  });
+
+  function updateRemindersList() {
+    const list = document.getElementById('remindersList');
+    if (!list) return;
+    list.innerHTML = '';
+    if (reminders.length === 0) {
+      list.innerHTML = '<div class="no-reminders">Brak przypomnień</div>';
+      return;
+    }
+    reminders.forEach((reminder, idx) => {
+      const div = document.createElement('div');
+      div.className = 'reminder-item';
+      div.innerHTML = `
+        <b>${reminder.text}</b> <span style="color:#888;">(za ${Math.max(0, Math.ceil((reminder.time - Date.now())/60000))} min)</span>
+        <button onclick="deleteReminder(${idx})" style="margin-left:10px;">Usuń</button>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function deleteReminder(index) {
+    const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+    reminders.splice(index, 1);
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+    updateRemindersList();
+  }
+
+  // Inicjalizacja przy ładowaniu strony
+  document.addEventListener('DOMContentLoaded', function() {
+    updateStatistics();
+    updateLoginHistory();
+    updateRemindersList();
+  });
+
+  // --- SYSTEM PRZYPOMNIEŃ ---
+  function updateRemindersList() {
+    const list = document.getElementById('remindersList');
+    if (!list) return;
+    list.innerHTML = '';
+    if (reminders.length === 0) {
+      list.innerHTML = '<div class="no-reminders">Brak przypomnień</div>';
+      return;
+    }
+    reminders.forEach((reminder, idx) => {
+      const div = document.createElement('div');
+      div.className = 'reminder-item';
+      div.innerHTML = `
+        <b>${reminder.text}</b> <span style="color:#888;">(za ${Math.max(0, Math.ceil((reminder.time - Date.now())/60000))} min)</span>
+        <button onclick="deleteReminder(${idx})" style="margin-left:10px;">Usuń</button>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function addReminder(text, minutes) {
+    const time = Date.now() + minutes * 60000;
+    reminders.push({ text, time });
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+    updateRemindersList();
+    scheduleReminder(reminders.length - 1);
+  }
+
+  function deleteReminder(idx) {
+    reminders.splice(idx, 1);
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+    updateRemindersList();
+  }
+
+  document.getElementById('reminderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const text = document.getElementById('reminderText').value.trim();
+    const minutes = parseInt(document.getElementById('reminderMinutes').value);
+    if (text && minutes > 0) {
+      addReminder(text, minutes);
+      this.reset();
+      // Pokaż komunikat sukcesu
+      const success = document.getElementById('remindersSuccess');
+      if (success) {
+        success.style.display = 'block';
+        setTimeout(() => { success.style.display = 'none'; }, 1500);
+      }
+      updateRemindersList();
+    }
+  });
+
+  function scheduleReminder(idx) {
+    const reminder = reminders[idx];
+    if (!reminder) return;
+    const delay = reminder.time - Date.now();
+    if (delay > 0) {
+      setTimeout(() => {
+        alert('Przypomnienie: ' + reminder.text);
+        // Po powiadomieniu automatycznie usuń przypomnienie
+        reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+        const i = reminders.findIndex(r => r.time === reminder.time && r.text === reminder.text);
+        if (i !== -1) {
+          reminders.splice(i, 1);
+          localStorage.setItem('reminders', JSON.stringify(reminders));
+          updateRemindersList();
+        }
+      }, delay);
+      } else {
+      // Jeśli czas już minął, usuń przypomnienie
+      deleteReminder(idx);
+    }
+  }
+
+  function scheduleAllReminders() {
+    reminders.forEach((_, idx) => scheduleReminder(idx));
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    updateRemindersList();
+    scheduleAllReminders();
+  });
+
+  function generateRozklad() {
+    const nr = document.getElementById('rozkladTrainNumber').value;
+    const typ = document.getElementById('rozkladTrainType').value;
+    const maszynista = document.getElementById('rozkladMaszynista').value;
+    const vmax = document.getElementById('rozkladVmax').value;
+    const lok = document.getElementById('rozkladLokomotywa').value;
+    const dlugosc = document.getElementById('rozkladDlugosc').value;
+
+    let typText = document.getElementById('rozkladTrainType').options[document.getElementById('rozkladTrainType').selectedIndex].text;
+
+    // Pobierz wybrane stacje
+    const stacje = Array.from(document.querySelectorAll('input[name=rozkladStacja]:checked')).map(cb => cb.value);
+
+    let output = `ROZKŁAD JAZDY\n`;
+    output += `Numer pociągu: ${nr}\n`;
+    output += `Typ pociągu: ${typ} (${typText})\n`;
+    output += `Maszynista: ${maszynista}\n`;
+    output += `Vmax: ${vmax} km/h\n`;
+    output += `Lokomotywa: ${lok}\n`;
+    output += `Długość rozkładu: ${dlugosc} stacji/odcinków\n`;
+    if (stacje.length > 0) {
+      output += `Stacje na trasie: ${stacje.join(' → ')}\n`;
+    }
+    output += `\n---\n`;
+    output += `Miejsce na szczegóły rozkładu (stacje, godziny, itp.)`;
+
+    document.getElementById('rozkladOutput').textContent = output;
+  }
+
+  // Lista stacji na podstawie panelu SWDR4 (mock)
+  const swdr4Stations = [
+    'Arkadia Zdrój 2012', 'Czermin', 'Kraśnica', 'LCS Kleszczów', 'Miasto Albercice',
+    'Niedoradz', 'Psary', 'Sól', 'Stare Lipowo', 'Tarkowice',
+    'Węglowce', 'Witonia', 'Wola', 'Żory', 'Zwardoń'
+  ];
+
+  function renderRozkladStacjeLista() {
+    const container = document.getElementById('rozkladStacjeLista');
+    if (!container) return;
+    container.innerHTML = swdr4Stations.map((st, idx) =>
+      `<label style='display:inline-block; min-width:180px; margin-bottom:4px;'><input type='checkbox' name='rozkladStacja' value="${st}"> ${st}</label>`
+    ).join('');
+  }
+  document.addEventListener('DOMContentLoaded', renderRozkladStacjeLista);
+</script>
+<footer style="width:100%; background:rgba(20,20,20,0.95); color:#ccc; text-align:center; font-size:0.95rem; padding: 18px 0 10px 0; margin-top: 40px; border-top: 2px solid #b30000; line-height: 1.7;">
+  Wydane przez: vakaru
+</footer>
+</body>
+</html>
